@@ -167,13 +167,15 @@ class PrioritizedSweepingValueIterationAgent(ValueIterationAgent):
           and then act according to the resulting policy.
         """
         self.theta = theta
+        # ValueIterationAgent.__init__ already sets self.mdp/discount/
+        # iterations/values and calls self.runValueIteration() -- which,
+        # since Python dispatches on the actual (subclass) type, already
+        # runs the prioritized-sweeping version overridden below. The
+        # extra re-assignment + second runValueIteration() call that used
+        # to follow here just redid that same work from scratch a second
+        # time on every construction, doubling the run time for no
+        # difference in the result.
         ValueIterationAgent.__init__(self, mdp, discount, iterations)
-
-        self.mdp = mdp
-        self.discount = discount
-        self.iterations = iterations
-        self.values = util.Counter()  # A Counter is a dict with default 0
-        self.runValueIteration()
 
 
     def runValueIteration(self):
